@@ -1,0 +1,40 @@
+{
+  "name": "koip",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "start": "concurrently \"yarn dev\" \"zrok share reserved usg6ekvtehwu\" --prefixColors auto",
+    "dev": "tsx watch src/index.ts",
+    "build": "npm-run-all clean lint build:app",
+    "build:app": "tsup src/app.ts",
+    "clean": "rimraf dist",
+    "lint": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/express-ws": "^3.0.5",
+    "@types/node": "^22.7.5",
+    "@types/ws": "^8.5.12",
+    "concurrently": "^9.0.1",
+    "dotenv": "^16.4.5",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^5.0.5",
+    "tsup": "^8.0.2",
+    "tsx": "^4.7.1",
+    "typescript": "^5.4.2"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "dotenv": "^16.4.5",
+    "elevenlabs": "^0.16.1",
+    "express": "^4.21.1",
+    "express-ws": "^5.0.2",
+    "tsx": "^4.19.1",
+    "twilio": "^5.0.1",
+    "typescript": "^5.6.2",
+    "ws": "^8.18.0"
+  }
+}
