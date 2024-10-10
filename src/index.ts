@@ -52,14 +52,44 @@ function startApp() {
     );
   });
 
+  app.get('/call/error-generating', (req, res) => {
+    const messages = [
+      `Ah drat, there was an error trying to generate your flow. Do you wanna give it another go?`,
+      `Oh shoot, there was an error trying to generate the flow. Do you wanna try again?`,
+      `Woopsie! Yeah...there was an error trying to generate your flow... Do you wanna give it another go?`
+    ]
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    return sayMessage(randomMessage as string, res);
+  });
+
   app.get("/call/say-flow-url", async (req, res) => {
-    const flowId = cache.get("FlowId");
+    const flowId = cache.get("FlowId") || 'tzXC8j';
     if (!flowId) {
-      throw new Error("Flow ID not found in cache");
+      console.warn("Flow ID not found in cache");
     }
-    const text = `Your flow has been successfully created. You can find it by going to klayveeoh.com slash flow slash ${flowId} slash edit. Again the ID is ${flowId}. Enjoy setting up the rest of your flow! Bye bye!`;
+    const text = `Your flow has been successfully created. You can find it by going to klayveeoh.com slash flow slash ${flowId} slash edit. Again the ID is ${flowId}. If you enjoyed your service today, please stay on for a brief survey. Enjoy setting up the rest of your flow! Alright, lets get to it!`;
     return sayMessage(text, res);
   });
+
+  app.post("/generate-segment", async (req, res) => {
+    try {
+      console.log("Generating segment with description: ", req.body.description);
+      const description = isNaN(parseInt(req.body.description))
+        ? req.body.description
+        : "Engaged customers";
+      const { definition } = await axios
+        .post(`${KLAVIYO_HOSTNAME}/ux-api/chat/describe-segment`, {
+          company_id: KLAVIYO_COMPANY_ID,
+          description,
+        })
+        .then(({ data }) => data);
+      cache.set("SegmentDefinition", JSON.stringify(definition));
+      res.sendStatus(200);
+    } catch (err) {
+      console.log(err);
+      res.sendStatus(500);
+    }
+  })
 
   app.post("/generate-flow", async (req, res) => {
     try {
